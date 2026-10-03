@@ -10,6 +10,59 @@ import Profile from './pages/Profile';
 import ComplaintCenter from './pages/ComplaintCenter';
 import ReviewPage from './pages/ReviewPage';
 
+// Accent Color Quick Switch Component
+function AccentSwitch() {
+  const { state, dispatch } = useStore();
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const accents = [
+    { key: 'mono', label: 'Mono', color: '#F5F5F5' },
+    { key: 'blue', label: 'Blue', color: '#5B7CFF' },
+    { key: 'violet', label: 'Violet', color: '#8B5CF6' },
+    { key: 'emerald', label: 'Green', color: '#20D39A' },
+    { key: 'amber', label: 'Amber', color: '#FFB84D' },
+    { key: 'crimson', label: 'Red', color: '#FF5B6E' },
+  ];
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="p-2 rounded-lg"
+        style={{ color: 'var(--text-secondary)' }}
+        aria-label="Change accent color"
+      >
+        <div className="w-5 h-5 rounded-full border-2" style={{ borderColor: 'var(--accent)', background: 'var(--accent-dim)' }} />
+      </button>
+      {isOpen && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+          <div className="absolute right-0 top-12 z-50 p-3 rounded-xl border shadow-2xl" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+            <div className="text-xs font-medium mb-2" style={{ color: 'var(--text-muted)' }}>Accent Color</div>
+            <div className="flex gap-2">
+              {accents.map(a => (
+                <button
+                  key={a.key}
+                  onClick={() => {
+                    dispatch({ type: 'SET_THEME', payload: { ...state.theme, accent: a.key as any } });
+                    setIsOpen(false);
+                  }}
+                  className="w-8 h-8 rounded-full border-2 transition-transform hover:scale-110"
+                  style={{ 
+                    borderColor: state.theme.accent === a.key ? a.color : 'var(--border)',
+                    background: a.color,
+                  }}
+                  title={a.label}
+                />
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 function AppContent() {
   const { state } = useStore();
 
@@ -87,6 +140,9 @@ function AppLayout() {
               <span>⌘K</span>
               <span>Search...</span>
             </button>
+
+            {/* Accent Color Quick Switch */}
+            <AccentSwitch />
             
             <div className="relative">
               <button
