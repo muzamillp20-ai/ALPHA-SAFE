@@ -10,7 +10,6 @@ export default function Respond() {
   const sections = [
     { key: 'emergency', label: 'Emergency' },
     { key: 'incident', label: 'Incidents' },
-    { key: 'complaint', label: 'Complaints' },
     { key: 'evidence', label: 'Evidence' },
   ];
 
@@ -40,7 +39,6 @@ export default function Respond() {
       <div className="animate-fade-in">
         {activeSection === 'emergency' && <EmergencyResponse />}
         {activeSection === 'incident' && <IncidentWorkspace />}
-        {activeSection === 'complaint' && <ComplaintBuilder />}
         {activeSection === 'evidence' && <EvidenceVault />}
       </div>
     </div>
@@ -139,7 +137,7 @@ function IncidentWorkspace() {
       type,
       status: 'draft',
       description: description.trim(),
-      timeline: [],
+      timeline: [{ id: crypto.randomUUID(), time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), description: 'Incident created', timestamp: new Date().toISOString() }],
       evidence: [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -163,9 +161,20 @@ function IncidentWorkspace() {
         <div className="rounded-2xl border p-6 mb-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>{incident.title}</h2>
-            <span className="text-xs px-2 py-1 rounded capitalize" style={{ background: 'var(--accent-dim)', color: 'var(--accent)' }}>
-              {incident.status}
-            </span>
+            <select
+              value={incident.status}
+              onChange={e => {
+                const updated = { ...incident, status: e.target.value as Incident['status'], updatedAt: new Date().toISOString() };
+                dispatch({ type: 'UPDATE_INCIDENT', payload: updated });
+                addActivity(dispatch, 'incident', `Updated status: ${e.target.value}`);
+              }}
+              className="text-xs px-2 py-1 rounded border outline-none"
+              style={{ background: 'var(--surface-2)', borderColor: 'var(--border)', color: 'var(--accent)' }}
+            >
+              <option value="draft">OPEN</option>
+              <option value="in-progress">IN REVIEW</option>
+              <option value="completed">DOCUMENTED</option>
+            </select>
           </div>
           <div className="text-xs mb-2" style={{ color: 'var(--text-muted)' }}>Type: {incident.type}</div>
           <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>{incident.description}</div>
@@ -244,10 +253,13 @@ function IncidentWorkspace() {
               <select value={type} onChange={e => setType(e.target.value)} className="w-full px-3 py-2.5 rounded-lg border text-sm outline-none" style={{ background: 'var(--surface-2)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}>
                 <option value="">Select type...</option>
                 <option value="phishing">Phishing</option>
-                <option value="scam">Scam</option>
+                <option value="digital-arrest">Digital Arrest Scam</option>
+                <option value="banking-fraud">Banking Fraud</option>
+                <option value="investment-scam">Investment Scam</option>
+                <option value="job-scam">Job Scam</option>
                 <option value="identity-theft">Identity Theft</option>
-                <option value="financial-fraud">Financial Fraud</option>
-                <option value="malware">Malware</option>
+                <option value="otp-scam">OTP Scam</option>
+                <option value="qr-scam">QR Code Scam</option>
                 <option value="other">Other</option>
               </select>
             </div>
@@ -305,7 +317,35 @@ function IncidentWorkspace() {
   );
 }
 
-function ComplaintBuilder() {
+function ComplaintLink() {
+  const navigate = useNavigate();
+  return (
+    <div className="space-y-4">
+      <div className="rounded-2xl border p-8 text-center" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+        <div className="text-3xl mb-3">⊞</div>
+        <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Complaint Practice Center</h3>
+        <p className="text-sm mb-6" style={{ color: 'var(--text-secondary)' }}>
+          Learn how to document a cyber incident, organize evidence, and prepare a structured complaint through a guided practice environment.
+        </p>
+        <button
+          onClick={() => navigate('/complaints')}
+          className="px-6 py-3 rounded-xl text-sm font-medium"
+          style={{ background: 'var(--accent)', color: 'var(--bg)' }}
+        >
+          Open Complaint Practice Center →
+        </button>
+      </div>
+      <div className="rounded-xl border p-4" style={{ borderColor: 'var(--warning)', background: 'rgba(255,184,77,0.05)' }}>
+        <p className="text-xs" style={{ color: 'var(--warning)' }}>
+          ⚠ This is an educational practice environment. It is NOT an official government complaint submission system.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// Legacy — kept for backward compatibility with old complaints
+function _LegacyComplaintBuilder() {
   const { state, dispatch } = useStore();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({

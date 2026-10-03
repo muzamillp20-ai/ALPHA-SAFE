@@ -19,16 +19,17 @@ export default function Command() {
     score: getCategoryScore(state, c.key),
   }));
 
-  // Generate recommendations from actual state
+  // Generate recommendations from actual state — NO FAKE DATA
   const recommendations: { text: string; action: string; path: string }[] = [];
   
-  const phishingCards = state.flashcardProgress.filter(f => f.category === 'phishing' && !f.known);
-  if (phishingCards.length > 0) {
-    recommendations.push({ text: `You missed ${phishingCards.length} phishing flashcard(s)`, action: 'Review now', path: '/learn?section=flashcards' });
+  const missedCards = state.flashcardProgress.filter(f => !f.known);
+  if (missedCards.length > 0) {
+    recommendations.push({ text: `Review ${missedCards.length} missed flashcard(s) to strengthen knowledge`, action: 'Review now', path: '/learn?section=flashcards' });
   }
   
-  if (categoryScores.find(c => c.key === 'apps' && c.score < 50 && state.flashcardProgress.some(f => f.category === 'apps'))) {
-    recommendations.push({ text: 'Your app-safety knowledge needs improvement', action: 'Start learning', path: '/learn?section=flashcards' });
+  const lowCategories = categoryScores.filter(c => c.score > 0 && c.score < 50);
+  if (lowCategories.length > 0) {
+    recommendations.push({ text: `${lowCategories[0].label} needs more practice (${lowCategories[0].score}%)`, action: 'Learn more', path: '/learn?section=flashcards' });
   }
   
   const healthItems = Object.values(state.securityHealth).filter(Boolean).length;
@@ -36,12 +37,20 @@ export default function Command() {
     recommendations.push({ text: `Security checklist: ${healthItems}/7 items completed`, action: 'Continue', path: '/profile?section=health' });
   }
 
-  if (state.scenarioAttempts.length === 0 && state.flashcardProgress.length > 5) {
-    recommendations.push({ text: 'Test your knowledge in the Scam Arena', action: 'Try it', path: '/learn?section=arena' });
+  if (state.scenarioAttempts.length === 0 && state.flashcardProgress.length >= 3) {
+    recommendations.push({ text: 'Test your knowledge in a realistic scam scenario', action: 'Try it', path: '/learn?section=arena' });
   }
 
+  if (state.incidents.length === 0 && state.flashcardProgress.length >= 5) {
+    recommendations.push({ text: 'Practice creating a complaint draft', action: 'Start', path: '/complaints' });
+  }
+
+  if (recommendations.length === 0 && state.flashcardProgress.length === 0) {
+    recommendations.push({ text: 'Begin your cyber safety journey with flashcards', action: 'Start learning', path: '/learn?section=flashcards' });
+  }
+  
   if (recommendations.length === 0) {
-    recommendations.push({ text: 'Start by analyzing a suspicious URL or message', action: 'Investigate', path: '/scan' });
+    recommendations.push({ text: 'Analyze a suspicious URL or message', action: 'Investigate', path: '/scan' });
   }
 
   const getGreeting = () => {
@@ -232,6 +241,26 @@ export default function Command() {
           </button>
         ))}
       </div>
+
+      {/* Recent Activity */}
+      {state.activity.length > 0 && (
+        <div className="mt-6 rounded-2xl border p-6 animate-slide-up" style={{ background: 'var(--surface)', borderColor: 'var(--border)', animationDelay: '400ms' }}>
+          <div className="text-xs font-medium tracking-wider uppercase mb-4" style={{ color: 'var(--text-muted)' }}>
+            Recent Activity
+          </div>
+          <div className="space-y-2">
+            {state.activity.slice(0, 5).map(act => (
+              <div key={act.id} className="flex items-center gap-3 py-1">
+                <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: 'var(--accent)' }} />
+                <span className="flex-1 text-xs truncate" style={{ color: 'var(--text-secondary)' }}>{act.description}</span>
+                <span className="text-[10px] shrink-0" style={{ color: 'var(--text-muted)' }}>
+                  {new Date(act.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

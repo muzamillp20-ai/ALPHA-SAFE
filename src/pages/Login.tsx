@@ -99,9 +99,11 @@ export default function Login() {
           <h1 className="text-4xl font-bold tracking-tight mt-8" style={{ color: 'var(--text-primary)' }}>
             ALPHA SAFE
           </h1>
-          <p className="text-lg mt-2 font-light" style={{ color: 'var(--text-secondary)' }}>
-            Stay ahead of the threat.
-          </p>
+          <div className="mt-4 space-y-1">
+            <p className="text-sm font-light" style={{ color: 'var(--text-secondary)' }}>Understand the threat.</p>
+            <p className="text-sm font-light" style={{ color: 'var(--text-secondary)' }}>Know the response.</p>
+            <p className="text-sm font-light" style={{ color: 'var(--text-secondary)' }}>Stay protected.</p>
+          </div>
         </div>
 
         {/* Signal Flow Visualization */}

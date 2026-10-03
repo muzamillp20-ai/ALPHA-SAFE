@@ -33,10 +33,10 @@ function AppLayout() {
 
   const navItems = [
     { path: '/command', label: 'Command', icon: '◈' },
-    { path: '/scan', label: 'Investigate', icon: '◎' },
     { path: '/learn', label: 'Learn', icon: '◉' },
-    { path: '/complaints', label: 'Complaints', icon: '⊞' },
+    { path: '/scan', label: 'Investigate', icon: '◎' },
     { path: '/respond', label: 'Respond', icon: '⚡' },
+    { path: '/complaints', label: 'Complaints', icon: '⊞' },
     { path: '/profile', label: 'Profile', icon: '○' },
   ];
 
