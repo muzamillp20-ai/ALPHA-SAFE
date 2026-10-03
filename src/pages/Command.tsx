@@ -218,8 +218,8 @@ export default function Command() {
         {[
           { label: 'Analyze URL', icon: '◎', path: '/scan?tab=url' },
           { label: 'Scam Arena', icon: '⚔', path: '/learn?section=arena' },
+          { label: 'Complaints', icon: '⊞', path: '/complaints' },
           { label: 'Emergency', icon: '⚡', path: '/respond?section=emergency' },
-          { label: 'Daily Drill', icon: '◈', path: '/learn?section=flashcards' },
         ].map(action => (
           <button
             key={action.label}

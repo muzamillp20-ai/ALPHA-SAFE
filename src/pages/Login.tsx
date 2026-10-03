@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useStore, addActivity } from '../store';
 
 export default function Login() {
@@ -10,6 +10,19 @@ export default function Login() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [particles, setParticles] = useState<{ id: number; x: number; y: number; delay: number; duration: number }[]>([]);
+
+  // Generate background particles
+  useEffect(() => {
+    const newParticles = Array.from({ length: 20 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      delay: Math.random() * 5,
+      duration: 3 + Math.random() * 4,
+    }));
+    setParticles(newParticles);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,14 +60,38 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex" style={{ background: 'var(--bg)' }}>
-      {/* Left Panel - Brand */}
-      <div className="hidden lg:flex flex-col justify-between w-1/2 p-12 relative overflow-hidden" style={{ background: 'var(--surface)' }}>
+    <div className="min-h-screen flex relative overflow-hidden" style={{ background: 'var(--bg)' }}>
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Grid pattern */}
         <div className="absolute inset-0 opacity-[0.03]" style={{
-          backgroundImage: 'radial-gradient(circle at 1px 1px, var(--text-primary) 1px, transparent 0)',
-          backgroundSize: '40px 40px'
+          backgroundImage: 'linear-gradient(var(--text-primary) 1px, transparent 1px), linear-gradient(90deg, var(--text-primary) 1px, transparent 1px)',
+          backgroundSize: '60px 60px'
         }} />
         
+        {/* Floating particles */}
+        {particles.map(p => (
+          <div
+            key={p.id}
+            className="absolute w-1 h-1 rounded-full animate-float"
+            style={{
+              left: `${p.x}%`,
+              top: `${p.y}%`,
+              background: 'var(--accent)',
+              opacity: 0.3,
+              animationDelay: `${p.delay}s`,
+              animationDuration: `${p.duration}s`,
+            }}
+          />
+        ))}
+
+        {/* Radial gradient orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-[0.03] blur-3xl animate-pulse-slow" style={{ background: 'var(--accent)' }} />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full opacity-[0.02] blur-3xl animate-pulse-slow" style={{ background: 'var(--accent)', animationDelay: '2s' }} />
+      </div>
+
+      {/* Left Panel - Brand */}
+      <div className="hidden lg:flex flex-col justify-between w-1/2 p-12 relative z-10">
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold" style={{ background: 'var(--accent)', color: 'var(--bg)' }}>α</div>
@@ -92,7 +129,7 @@ export default function Login() {
       </div>
 
       {/* Right Panel - Auth */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 relative z-10">
         <div className="w-full max-w-sm">
           {/* Mobile brand */}
           <div className="lg:hidden mb-10">

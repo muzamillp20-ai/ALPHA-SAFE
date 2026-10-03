@@ -7,17 +7,18 @@ import Scan from './pages/Scan';
 import Learn from './pages/Learn';
 import Respond from './pages/Respond';
 import Profile from './pages/Profile';
+import ComplaintCenter from './pages/ComplaintCenter';
+import ReviewPage from './pages/ReviewPage';
 
 function AppContent() {
   const { state } = useStore();
 
-  if (!state.isAuthenticated) {
-    return <Login />;
-  }
-
   return (
     <HashRouter>
-      <AppLayout />
+      <Routes>
+        <Route path="/review/:token" element={<ReviewPage />} />
+        <Route path="/*" element={state.isAuthenticated ? <AppLayout /> : <Login />} />
+      </Routes>
     </HashRouter>
   );
 }
@@ -34,6 +35,7 @@ function AppLayout() {
     { path: '/command', label: 'Command', icon: '◈' },
     { path: '/scan', label: 'Investigate', icon: '◎' },
     { path: '/learn', label: 'Learn', icon: '◉' },
+    { path: '/complaints', label: 'Complaints', icon: '⊞' },
     { path: '/respond', label: 'Respond', icon: '⚡' },
     { path: '/profile', label: 'Profile', icon: '○' },
   ];
@@ -195,6 +197,7 @@ function AppLayout() {
             <Route path="/command" element={<Command />} />
             <Route path="/scan" element={<Scan />} />
             <Route path="/learn" element={<Learn />} />
+            <Route path="/complaints" element={<ComplaintCenter />} />
             <Route path="/respond" element={<Respond />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<Navigate to="/command" replace />} />
@@ -238,6 +241,7 @@ function CommandPalette({ onClose }: { onClose: () => void }) {
     { label: 'Emergency Response', action: () => navigate('/respond?section=emergency') },
     { label: 'Create Incident', action: () => navigate('/respond?section=incident') },
     { label: 'Complaint Builder', action: () => navigate('/respond?section=complaint') },
+    { label: 'Complaint Practice Center', action: () => navigate('/complaints') },
     { label: 'Evidence Vault', action: () => navigate('/respond?section=evidence') },
     { label: 'Security Health', action: () => navigate('/profile?section=health') },
     { label: 'Settings', action: () => navigate('/profile?section=settings') },

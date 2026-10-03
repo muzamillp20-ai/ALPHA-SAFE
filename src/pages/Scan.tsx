@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useStore, addActivity } from '../store';
 import { analyzeURL, analyzeMessage, type URLAnalysisResult, type MessageAnalysisResult } from '../analyzers';
+import { explainThreat } from '../ai';
 
 type Tab = 'url' | 'message' | 'app';
 
@@ -206,6 +207,7 @@ function URLAnalyzer({ dispatch }: { dispatch: any }) {
             <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               {result.explanation}
             </p>
+            <AIExplainButton context={input} type="url" />
           </div>
 
           {/* Safe Actions */}
@@ -329,6 +331,7 @@ function MessageAnalyzer({ dispatch }: { dispatch: any }) {
             <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               {result.explanation}
             </p>
+            <AIExplainButton context={input} type="message" />
           </div>
 
           {/* Safe Actions */}
@@ -473,6 +476,46 @@ function AppSafety() {
               ))}
             </div>
           </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// AI Explain Button Component
+function AIExplainButton({ context, type }: { context: string; type: 'url' | 'message' }) {
+  const [showAI, setShowAI] = useState(false);
+  const [aiResponse, setAiResponse] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleAskAI = async () => {
+    if (showAI) {
+      setShowAI(false);
+      return;
+    }
+    setLoading(true);
+    setShowAI(true);
+    const response = await explainThreat(context, type);
+    setAiResponse(response);
+    setLoading(false);
+  };
+
+  return (
+    <div className="mt-4 pt-4 border-t" style={{ borderColor: 'var(--border)' }}>
+      <button
+        onClick={handleAskAI}
+        disabled={loading}
+        className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg border transition-all"
+        style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}
+      >
+        {loading ? '⟳' : '✦'} {loading ? 'AI is thinking...' : showAI ? 'Hide AI Analysis' : 'Ask AI Assistant'}
+      </button>
+      {showAI && aiResponse && (
+        <div className="mt-3 p-3 rounded-lg text-xs leading-relaxed" style={{ background: 'var(--surface-2)', color: 'var(--text-secondary)' }}>
+          <div className="text-[10px] font-medium tracking-wider uppercase mb-2" style={{ color: 'var(--accent)' }}>
+            AI ANALYSIS
+          </div>
+          {aiResponse}
         </div>
       )}
     </div>

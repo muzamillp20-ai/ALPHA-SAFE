@@ -100,6 +100,45 @@ export interface ActivityLog {
   timestamp: string;
 }
 
+export interface ShareToken {
+  id: string;
+  complaintId: string;
+  token: string;
+  createdAt: string;
+  expiresAt: string;
+  revoked: boolean;
+}
+
+export interface PracticeComplaint {
+  id: string;
+  isDemo: boolean;
+  incidentType: string;
+  incidentDate: string;
+  incidentTime: string;
+  incidentLocation: string;
+  description: string;
+  whoContacted: string;
+  whatClaimed: string;
+  whatAsked: string;
+  whatAfter: string;
+  suspectPhone: string;
+  suspectEmail: string;
+  suspectWebsite: string;
+  suspectSocial: string;
+  suspectOther: string;
+  moneyInvolved: boolean;
+  amount: string;
+  paymentMethod: string;
+  transactionDate: string;
+  transactionRef: string;
+  bankProvider: string;
+  timeline: { time: string; event: string; description: string }[];
+  evidence: { id: string; type: string; name: string; description: string; date: string }[];
+  shareTokens: ShareToken[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AppState {
   user: User | null;
   isAuthenticated: boolean;
@@ -110,6 +149,7 @@ export interface AppState {
   messageAnalyses: MessageAnalysis[];
   incidents: Incident[];
   complaints: ComplaintDraft[];
+  practiceComplaints: PracticeComplaint[];
   securityHealth: SecurityHealth;
   activity: ActivityLog[];
   notifications: { id: string; text: string; read: boolean; timestamp: string }[];
@@ -129,6 +169,11 @@ type Action =
   | { type: 'ADD_COMPLAINT'; payload: ComplaintDraft }
   | { type: 'UPDATE_COMPLAINT'; payload: ComplaintDraft }
   | { type: 'DELETE_COMPLAINT'; payload: string }
+  | { type: 'ADD_PRACTICE_COMPLAINT'; payload: PracticeComplaint }
+  | { type: 'UPDATE_PRACTICE_COMPLAINT'; payload: PracticeComplaint }
+  | { type: 'DELETE_PRACTICE_COMPLAINT'; payload: string }
+  | { type: 'ADD_SHARE_TOKEN'; payload: { complaintId: string; token: ShareToken } }
+  | { type: 'REVOKE_SHARE_TOKEN'; payload: { complaintId: string; tokenId: string } }
   | { type: 'UPDATE_SECURITY_HEALTH'; payload: Partial<SecurityHealth> }
   | { type: 'ADD_ACTIVITY'; payload: ActivityLog }
   | { type: 'ADD_NOTIFICATION'; payload: { id: string; text: string; timestamp: string } }
@@ -144,6 +189,7 @@ const initialState: AppState = {
   messageAnalyses: [],
   incidents: [],
   complaints: [],
+  practiceComplaints: [],
   securityHealth: { mfa: false, passwordManager: false, deviceUpdates: false, appPermissions: false, privacySettings: false, recoveryOptions: false, bankingAlerts: false },
   activity: [],
   notifications: [],
@@ -177,6 +223,30 @@ function reducer(state: AppState, action: Action): AppState {
       return { ...state, complaints: state.complaints.map(c => c.id === action.payload.id ? action.payload : c) };
     case 'DELETE_COMPLAINT':
       return { ...state, complaints: state.complaints.filter(c => c.id !== action.payload) };
+    case 'ADD_PRACTICE_COMPLAINT':
+      return { ...state, practiceComplaints: [action.payload, ...state.practiceComplaints] };
+    case 'UPDATE_PRACTICE_COMPLAINT':
+      return { ...state, practiceComplaints: state.practiceComplaints.map(c => c.id === action.payload.id ? action.payload : c) };
+    case 'DELETE_PRACTICE_COMPLAINT':
+      return { ...state, practiceComplaints: state.practiceComplaints.filter(c => c.id !== action.payload) };
+    case 'ADD_SHARE_TOKEN':
+      return {
+        ...state,
+        practiceComplaints: state.practiceComplaints.map(c =>
+          c.id === action.payload.complaintId
+            ? { ...c, shareTokens: [...c.shareTokens, action.payload.token], updatedAt: new Date().toISOString() }
+            : c
+        ),
+      };
+    case 'REVOKE_SHARE_TOKEN':
+      return {
+        ...state,
+        practiceComplaints: state.practiceComplaints.map(c =>
+          c.id === action.payload.complaintId
+            ? { ...c, shareTokens: c.shareTokens.map(t => t.id === action.payload.tokenId ? { ...t, revoked: true } : t), updatedAt: new Date().toISOString() }
+            : c
+        ),
+      };
     case 'UPDATE_SECURITY_HEALTH':
       return { ...state, securityHealth: { ...state.securityHealth, ...action.payload } };
     case 'ADD_ACTIVITY':
@@ -219,6 +289,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       messageAnalyses: state.messageAnalyses,
       incidents: state.incidents,
       complaints: state.complaints,
+      practiceComplaints: state.practiceComplaints,
       securityHealth: state.securityHealth,
       activity: state.activity,
       notifications: state.notifications,

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useStore, addActivity, type Incident, type EvidenceItem, type ComplaintDraft } from '../store';
 
 export default function Respond() {
@@ -375,12 +375,25 @@ This is a user-generated draft. Please submit through official channels.
 
   const steps = ['Incident', 'Details', 'Suspected Info', 'Financial', 'Evidence', 'Review'];
 
+  const navigate = useNavigate();
+
   return (
     <div>
-      <div className="rounded-xl border p-3 mb-6 text-center" style={{ borderColor: 'var(--warning)', background: 'rgba(255,184,77,0.05)' }}>
+      <div className="rounded-xl border p-3 mb-4 text-center" style={{ borderColor: 'var(--warning)', background: 'rgba(255,184,77,0.05)' }}>
         <p className="text-xs" style={{ color: 'var(--warning)' }}>
           ⚠ USER-GENERATED DRAFT — NOT AN OFFICIAL GOVERNMENT SUBMISSION
         </p>
+      </div>
+
+      {/* Link to Complaint Practice Center */}
+      <div className="rounded-xl border p-4 mb-6 flex items-center justify-between" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
+        <div>
+          <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Complaint Practice Center</div>
+          <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Learn, practice, and generate QR review copies</div>
+        </div>
+        <button onClick={() => navigate('/complaints')} className="px-3 py-1.5 rounded-lg text-xs font-medium" style={{ background: 'var(--accent-dim)', color: 'var(--accent)' }}>
+          Open →
+        </button>
       </div>
 
       {/* Step indicator */}
@@ -492,6 +505,20 @@ This is a user-generated draft. Please submit through official channels.
               </button>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Demo Complaint */}
+      <div className="mt-6 rounded-xl border p-4" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-xs font-medium tracking-wider uppercase mb-1" style={{ color: 'var(--text-muted)' }}>DEMO COMPLAINT</div>
+            <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>Open Demo Incident</div>
+            <div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Fictional phishing complaint for learning purposes</div>
+          </div>
+          <button onClick={() => navigate('/complaints')} className="px-3 py-1.5 rounded-lg text-xs font-medium" style={{ background: 'var(--accent-dim)', color: 'var(--accent)' }}>
+            View Demo →
+          </button>
         </div>
       </div>
 
