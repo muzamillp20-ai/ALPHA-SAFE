@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useStore, addActivity } from '../store';
 
 // ============================================================
@@ -234,6 +234,7 @@ const CATEGORIES = [
 // ============================================================
 export default function Learn() {
   const [params] = useSearchParams();
+  const navigate = useNavigate();
   const section = params.get('section') || 'academy';
   const [activeSection, setActiveSection] = useState(section);
 
@@ -242,6 +243,7 @@ export default function Learn() {
     { key: 'flashcards', label: 'Flashcards' },
     { key: 'arena', label: 'Scam Arena' },
     { key: 'phishing', label: 'Phishing Lab' },
+    { key: 'safety', label: 'Safety Center' },
   ];
 
   return (
@@ -272,6 +274,39 @@ export default function Learn() {
         {activeSection === 'flashcards' && <FlashcardSystem />}
         {activeSection === 'arena' && <ScamArena />}
         {activeSection === 'phishing' && <PhishingLab />}
+        {activeSection === 'safety' && (
+          <div className="space-y-4">
+            <div className="rounded-2xl border p-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+              <div className="flex items-center gap-3 mb-3">
+                <span className="text-3xl">🛡</span>
+                <div>
+                  <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Cyber Crime Safety Center</h3>
+                  <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Comprehensive knowledge base for understanding and responding to cyber threats</p>
+                </div>
+              </div>
+              <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>
+                Learn about different types of cybercrime, warning signs, precautions, and what to do if you become a victim. Includes emergency contacts, evidence preservation guides, and step-by-step response procedures.
+              </p>
+              <button
+                onClick={() => navigate('/safety-center')}
+                className="w-full py-3 rounded-xl text-sm font-medium transition-all"
+                style={{ background: 'var(--accent)', color: 'var(--bg)' }}
+              >
+                Open Safety Center →
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-xl border p-4" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+                <div className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>11+</div>
+                <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Crime Categories</div>
+              </div>
+              <div className="rounded-xl border p-4" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+                <div className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>14</div>
+                <div className="text-xs" style={{ color: 'var(--text-muted)' }}>Sections Per Topic</div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

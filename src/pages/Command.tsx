@@ -245,9 +245,9 @@ export default function Command() {
       {/* Quick Actions */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 animate-slide-up" style={{ animationDelay: '300ms' }}>
         {[
+          { label: 'Safety Center', icon: '🛡', path: '/safety-center' },
           { label: 'Analyze URL', icon: '◎', path: '/scan?tab=url' },
           { label: 'Scam Arena', icon: '⚔', path: '/learn?section=arena' },
-          { label: 'Complaints', icon: '⊞', path: '/complaints' },
           { label: 'Emergency', icon: '⚡', path: '/respond?section=emergency' },
         ].map(action => (
           <button

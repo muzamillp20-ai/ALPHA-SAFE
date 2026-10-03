@@ -47,6 +47,7 @@ export default function Respond() {
 
 function EmergencyResponse() {
   const { dispatch } = useStore();
+  const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState<string | null>(null);
 
   const emergencyTypes = [
@@ -116,6 +117,18 @@ function EmergencyResponse() {
             <span className="text-xs font-medium" style={{ color: 'var(--text-secondary)' }}>{t.label}</span>
           </button>
         ))}
+      </div>
+
+      <div className="mt-6 rounded-xl border p-4" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>🛡 Cyber Crime Safety Center</div>
+            <div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>Learn about different types of cybercrime and how to respond</div>
+          </div>
+          <button onClick={() => navigate('/safety-center')} className="px-3 py-1.5 rounded-lg text-xs font-medium" style={{ background: 'var(--accent-dim)', color: 'var(--accent)' }}>
+            Open →
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ import Respond from './pages/Respond';
 import Profile from './pages/Profile';
 import ComplaintCenter from './pages/ComplaintCenter';
 import ReviewPage from './pages/ReviewPage';
+import SafetyCenter from './pages/SafetyCenter';
 
 // Accent Color Quick Switch Component
 function AccentSwitch() {
@@ -87,6 +88,7 @@ function AppLayout() {
   const navItems = [
     { path: '/command', label: 'Command', icon: '◈' },
     { path: '/learn', label: 'Learn', icon: '◉' },
+    { path: '/safety-center', label: 'Safety Center', icon: '🛡' },
     { path: '/scan', label: 'Investigate', icon: '◎' },
     { path: '/respond', label: 'Respond', icon: '⚡' },
     { path: '/complaints', label: 'Complaints', icon: '⊞' },
@@ -253,6 +255,7 @@ function AppLayout() {
             <Route path="/command" element={<Command />} />
             <Route path="/scan" element={<Scan />} />
             <Route path="/learn" element={<Learn />} />
+            <Route path="/safety-center" element={<SafetyCenter />} />
             <Route path="/complaints" element={<ComplaintCenter />} />
             <Route path="/respond" element={<Respond />} />
             <Route path="/profile" element={<Profile />} />
@@ -294,6 +297,7 @@ function CommandPalette({ onClose }: { onClose: () => void }) {
     { label: 'Start Flashcards', action: () => navigate('/learn?section=flashcards') },
     { label: 'Scam Arena', action: () => navigate('/learn?section=arena') },
     { label: 'Phishing Lab', action: () => navigate('/learn?section=phishing') },
+    { label: 'Cyber Crime Safety Center', action: () => navigate('/safety-center') },
     { label: 'Emergency Response', action: () => navigate('/respond?section=emergency') },
     { label: 'Create Incident', action: () => navigate('/respond?section=incident') },
     { label: 'Complaint Builder', action: () => navigate('/respond?section=complaint') },
