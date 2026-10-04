@@ -1,8 +1,8 @@
 // AI Assistant Integration
 // WARNING: API keys should never be exposed in frontend code in production.
-// This is for demonstration purposes only.
+// For production deployment, use a backend proxy service.
 
-const API_KEY = 'sk-orv1-b5e962f0e150155c9aafb74e99b0d83ca4aed984c7b231faff8ec7777dfc77b9';
+const API_KEY = import.meta.env.VITE_AI_API_KEY || '';
 const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 export interface AIMessage {
@@ -260,6 +260,12 @@ export async function askAI(messages: AIMessage[]): Promise<string> {
   // If we have a knowledge base match, use it immediately
   if (knowledgeBaseResponse !== getDefaultResponse()) {
     return knowledgeBaseResponse;
+  }
+  
+  // If no API key is configured, return default response
+  if (!API_KEY) {
+    console.log('AI API key not configured, using default response');
+    return getDefaultResponse();
   }
   
   // For general questions, try API as enhancement (with full error handling)
